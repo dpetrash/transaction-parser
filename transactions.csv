@@ -1,0 +1,42 @@
+transaction_type,name,email,amount_usd,original_amount,original_currency,date
+Payment,Alice Johnson,alice.johnson@gmail.com,42.5,42.5,USD,2024-11-02
+Charge,Anna Kowalska,anna.kowalska@yahoo.com,16.14,13.99,EUR,2024-12-02
+Charge,Carlos Mendes,carlos.mendes@outlook.com,23.06,19.99,EUR,2024-11-03
+Refund,Liam Murphy,liam.murphy@icloud.com,9.85,7.5,GBP,2024-12-03
+Refund,Maria Silva,maria.silva@yahoo.com,22.29,120.0,BRL,2024-11-05
+Failed Charge,Sophie Laurent,sophie.laurent@mail.ru,34.49,29.9,EUR,2024-12-04
+Payment,,john_doe@protonmail.com,11.49,8.75,GBP,2024-11-06
+Payment,Marta Rossi,marta.rossi@me.com,18.0,18.0,USD,2024-12-05
+Failed Charge,Emma Wilson,emma.wilson@gmail.com,13.4,13.4,USD,2024-11-07
+Charge,Pavel Novak,pavel.novak@gmail.com,26.7,23.15,EUR,2024-12-06
+Payment,Igor Petrov,igor.petrov@mail.ru,6.93,560.0,RUB,2024-11-08
+Payment,Elena Popescu,elena.popescu@outlook.com,180.0,180.0,USD,2024-12-07
+Refund,Kevin Brown,kevinb@icloud.com,27.8,24.1,EUR,2024-11-09
+Refund,Lucas Garcia,lucas.garcia@gmail.com,5.39,29.0,BRL,2024-12-08
+Charge,Sarah Lee,sarah.lee@me.com,35.0,35.0,USD,2024-11-10
+Payment,Isabella Santos,isabella.santos@mail.ru,55.75,55.75,USD,2024-12-09
+Failed Charge,Noah Becker,noah.becker@icloud.com,16.42,12.5,GBP,2024-12-10
+Refund,Yuki Tanaka,yuki.tanaka@me.com,20.65,17.9,EUR,2024-12-11
+Payment,Olga Ivanova,olga.ivanova@gmail.com,87.2,87.2,USD,2024-11-11
+Charge,Alice Johnson,alice.johnson@gmail.com,90.5,90.5,USD,2024-12-12
+Refund,David Smith,david.smith@outlook.com,242.22,210.0,EUR,2024-11-12
+Payment,Carlos Mendes,carlos.mendes@outlook.com,39.45,34.2,EUR,2024-12-13
+Charge,Anna Kowalska,anna.kowalska@yahoo.com,56.51,48.99,EUR,2024-11-13
+Refund,Maria Silva,maria.silva@yahoo.com,24.15,130.0,BRL,2024-12-14
+Refund,Liam Murphy,liam.murphy@icloud.com,42.68,32.5,GBP,2024-11-14
+Payment,John Doe,john.doe@protonmail.com,29.94,22.8,GBP,2024-12-15
+Failed Charge,Sophie Laurent,sophie.laurent@mail.ru,22.03,19.1,EUR,2024-11-15
+Failed Charge,Emma Wilson,emma.wilson@gmail.com,16.9,16.9,USD,2024-12-16
+Payment,Marta Rossi,marta.rossi@me.com,25.0,25.0,USD,2024-11-16
+Payment,Igor Petrov,igor.petrov@mail.ru,5.69,460.0,RUB,2024-12-17
+Charge,Pavel Novak,pavel.novak@gmail.com,15.86,13.75,EUR,2024-11-17
+Refund,Kevin Brown,kevinb@icloud.com,48.56,42.1,EUR,2024-12-18
+Payment,Elena Popescu,elena.popescu@outlook.com,240.0,240.0,USD,2024-11-18
+Charge,Sarah Lee,sarah.lee@me.com,64.0,64.0,USD,2024-12-19
+Refund,Lucas Garcia,lucas.garcia@gmail.com,3.53,19.0,BRL,2024-11-19
+Payment,Olga Ivanova,olga.ivanova@gmail.com,110.25,110.25,USD,2024-12-20
+Payment,Isabella Santos,isabella.santos@mail.ru,102.25,102.25,USD,2024-11-20
+Refund,David Smith,david.smith@outlook.com,80.74,70.0,EUR,2024-12-21
+Failed Charge,Noah Becker,noah.becker@icloud.com,7.75,5.9,GBP,2024-11-21
+Charge,Anna Kowalska,anna.kowalska@yahoo.com,32.86,28.49,EUR,2024-12-22
+Refund,Yuki Tanaka,yuki.tanaka@me.com,15.46,13.4,EUR,2024-11-22
