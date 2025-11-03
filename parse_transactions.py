@@ -8,10 +8,34 @@ import email.utils
 import requests
 from dotenv import load_dotenv
 from openai import OpenAI
+from supabase import create_client, Client
 
 # Load environment variables
-load_dotenv('key.env')
-API_KEY = os.getenv('API_key')
+load_dotenv('key.env', override=True)
+
+# Also manually parse key.env file for variables that dotenv might miss
+def parse_key_env():
+    """Manually parse key.env file to extract variables"""
+    env_vars = {}
+    try:
+        with open('key.env', 'r') as f:
+            for line in f:
+                line = line.strip()
+                if line and '=' in line and not line.startswith('#'):
+                    key, value = line.split('=', 1)
+                    key = key.strip()
+                    # Remove quotes from value
+                    value = value.strip().strip("'").strip('"')
+                    env_vars[key] = value
+    except Exception as e:
+        print(f"Warning: Could not parse key.env file: {e}")
+    return env_vars
+
+# Get environment variables
+env_vars = parse_key_env()
+API_KEY = os.getenv('API_key') or env_vars.get('API_key')
+SUPABASE_URL = os.getenv('SUPABASE_URL') or env_vars.get('SUPABASE_URL')
+SUPABASE_KEY = os.getenv('SUPABASE_KEY') or env_vars.get('SUPABASE_KEY')
 
 if not API_KEY:
     raise ValueError("API key not found in key.env file. Please ensure API_key is set correctly.")
@@ -24,6 +48,29 @@ try:
     client = OpenAI(api_key=API_KEY)
 except Exception as e:
     raise Exception(f"Failed to initialize OpenAI client: {str(e)}")
+
+# Configure Supabase client (optional - will only use if credentials are provided)
+supabase: Client | None = None
+if SUPABASE_URL and SUPABASE_KEY:
+    SUPABASE_URL = SUPABASE_URL.strip("'").strip('"')
+    SUPABASE_KEY = SUPABASE_KEY.strip("'").strip('"')
+    try:
+        print(f"Initializing Supabase client with URL: {SUPABASE_URL}")
+        print(f"Supabase key starts with: {SUPABASE_KEY[:10]}...")
+        supabase = create_client(SUPABASE_URL, SUPABASE_KEY)
+        # Test connection by trying to read from the table
+        test_result = supabase.table('transactions').select('id').limit(1).execute()
+        print("✓ Supabase client initialized successfully and connection verified!")
+    except Exception as e:
+        print(f"✗ Warning: Failed to initialize Supabase client: {str(e)}")
+        print("Continuing without Supabase integration...")
+        print("Please check:")
+        print("  1. SUPABASE_URL is correct")
+        print("  2. SUPABASE_KEY is a valid service role key (starts with 'eyJ' for JWT)")
+        print("  3. The 'transactions' table exists in your Supabase database")
+        supabase = None
+else:
+    print("Note: Supabase credentials not found. Transactions will only be saved to CSV.")
 
 # Exchange rate cache and functions
 exchange_rates = {}
@@ -209,6 +256,35 @@ def parse_transaction_with_llm(text, retry_count=0, max_retries=3):
                 'date': ''
             }
 
+def save_transaction_to_supabase(transaction_data):
+    """Save a transaction to Supabase database"""
+    if supabase is None:
+        return False
+    
+    try:
+        # Prepare data for Supabase
+        supabase_data = {
+            'transaction_type': transaction_data['transaction_type'],
+            'name': transaction_data['name'] if transaction_data['name'] else None,
+            'email': transaction_data['email'] if transaction_data['email'] else None,
+            'amount_usd': transaction_data['amount_usd'],
+            'original_amount': transaction_data['original_amount'],
+            'original_currency': transaction_data['original_currency'] if transaction_data['original_currency'] else None,
+            'date': transaction_data['date'] if transaction_data['date'] else None
+        }
+        
+        # Insert into Supabase
+        result = supabase.table('transactions').insert(supabase_data).execute()
+        if result.data:
+            return True
+        else:
+            print(f"Warning: Supabase insert returned no data for transaction: {transaction_data.get('transaction_type', 'Unknown')}")
+            return False
+    except Exception as e:
+        print(f"\n✗ Error saving transaction to Supabase: {str(e)}")
+        print(f"  Transaction data: {json.dumps(supabase_data, indent=2)}")
+        return False
+
 def process_transactions(input_filename, output_filename):
     fieldnames = ['transaction_type', 'name', 'email', 'amount_usd', 'original_amount', 'original_currency', 'date']
     processed_count = 0
@@ -285,6 +361,12 @@ def process_transactions(input_filename, output_filename):
                 writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
                 writer.writerow(csv_transaction)
             
+            # Save to Supabase if configured
+            if supabase:
+                supabase_saved = save_transaction_to_supabase(csv_transaction)
+                if not supabase_saved:
+                    print(f"\n⚠ Warning: Failed to save transaction {i+1} to Supabase")
+            
             processed_count += 1
             
             # Update progress bar
@@ -313,6 +395,10 @@ def main():
     print(f"Input file: {input_file}")
     print(f"Output file: {output_file}")
     print("Using OpenAI API for processing")
+    if supabase:
+        print("✓ Supabase integration enabled")
+    else:
+        print("Note: Supabase integration disabled (add SUPABASE_URL and SUPABASE_KEY to key.env)")
     print("================================\n")
     
     start_time = time.time()
